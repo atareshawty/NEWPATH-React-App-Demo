@@ -55,7 +55,7 @@ export default class Test extends React.Component {
   }
 
   render() {
-    const { data } = this.state;
+    const { data, voice } = this.state;
     const joke = data && data.value.joke;
 
     return (
@@ -70,7 +70,7 @@ export default class Test extends React.Component {
         >
           <Speech
             text={joke || 'Loading...'}
-            voice={this.state.voice}
+            voice={voice}
             styles={{
               container: {
                 flex: '1',

@@ -4,13 +4,7 @@ import SelectField from 'material-ui/SelectField';
 
 const getVoices = (voices) =>({
   voice: voices[0].name,
-  voices: voices.map(({ name }) => (
-    <MenuItem
-      value={name}
-      key={name}
-      primaryText={name}
-    />
-  ))
+  voices: voices.map(({ name }) => name)
 });
 
 export default class VoiceList extends React.Component {
@@ -45,11 +39,21 @@ export default class VoiceList extends React.Component {
   }
 
   handleVoicesChange() {
-    this.setState(getVoices(window.speechSynthesis.getVoices()));
+    const state = getVoices(window.speechSynthesis.getVoices());
+
+    this.props.onVoiceChange(state.voices[0]);
+    this.setState(state);
   }
 
   render() {
     const defaultValue = 'Loading voices...';
+    const items = this.state.voices.map((name) =>
+      <MenuItem
+        value={name}
+        key={name}
+        primaryText={name}
+      />
+    );
 
     return (
       <SelectField
@@ -58,7 +62,7 @@ export default class VoiceList extends React.Component {
         maxHeight={200}
       >
         {this.state.voices.length ?
-          this.state.voices :
+          items :
           <MenuItem
             value={defaultValue}
             primaryText={defaultValue}
