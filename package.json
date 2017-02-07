@@ -2,7 +2,7 @@
   "name": "newpath-react-demo",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://atareshawty.github.io/NEWPATH-React-App-Demo",
+  "homepage": "http://atareshawty.github.io/newpath-react-app-demo",
   "devDependencies": {
     "gh-pages": "^0.12.0",
     "react-scripts": "0.8.5"
