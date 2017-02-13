@@ -6,7 +6,7 @@ We'll start out with a quick primer, then get right into it. I'll probably talk 
 you're interested in reading some docs [The Official React Docs](https://facebook.github.io/react/) are incredible.
 Their team does a great job making learning easy.
 
-## ECMA 2015 (ES6)
+## ECMAScript 2015 (ES6)
 This is a more recent standard of JavaScript than you'd probably get in the Web Apps class. There are
 a few new features that are leveraged heavily in most React based sites you'll see, so when we come across them, I'll
 point it out. [Here](http://es6-features.org/#Constants) is an exhaustive list of features new to ES6 and a few reasons
