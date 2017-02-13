@@ -50,7 +50,7 @@ export default class VoiceList extends React.Component {
     window.speechSynthesis.removeEventListener('voiceschanged', this.handleVoicesChange);
   }
 
-  componentShouldUpdate(props, state) {
+  shouldComponentUpdate(props, state) {
     const { voice, voices } = this.state;
     if (voice === state.voice && voices.length > 0) {
       return false;

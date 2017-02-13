@@ -11,7 +11,7 @@ import './index.css';
   The library ReactDom takes care of interacting with the actual DOM elements on the page
   The library React handles all of the logic behind managing all of our components for us
 */
-const anchorElementId = ''; // root element id goes here. hint: look at index.html
+const anchorElementId = 'root'; // root element id goes here. hint: look at index.html
 
 ReactDOM.render(
   <App />,

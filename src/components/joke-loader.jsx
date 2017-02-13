@@ -113,7 +113,7 @@ export default class JokeLoader extends React.Component {
     What property of the state is changing?
   */
   handleVoiceChange(voice) {
-    this.setState(/* What about our state is changing? */);
+    this.setState({ voice });
   }
 
   /*
@@ -205,7 +205,7 @@ export default class JokeLoader extends React.Component {
             If I remember correctly, we have a function for handling the click event, don't we?
           */}
           <RaisedButton
-            onClick
+            onClick={this.handleClick}
             primary
           >
             Get a new joke!
