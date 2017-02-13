@@ -5,36 +5,84 @@ import Speech from 'react-speech/dist/react-speech.min';
 import TextField from 'material-ui/TextField';
 import VoiceList from './voice-list';
 
+/*
+  Nothing informative in this comment, but you should check out the Chuck Norris api docs to see what else you can do with it!
+  http://www.icndb.com/api/
+*/
 const apiEndPoint = (firstName = 'Chuck', lastName = 'Norris') =>
   `http://api.icndb.com/jokes/random?firstName=${firstName}&lastName=${lastName}`;
 
-export default class Test extends React.Component {
+/*
+  ES6 has classes! (kind of)
+  This syntax simply means that our JokeLoader class extends the React.Component class
+  Abstractly, you can think of this inheritance like a Java class or something you've seen in Software I/II
+  We need to extend this class because our JokeLoader component needs to have state
+  It's harder to have state in functional components
+*/
+export default class JokeLoader extends React.Component {
 
   constructor(props) {
     super(props);
+    // The state of this component is represented by this JavaScript object
     this.state = {
-      data: null,
-      firstName: undefined,
-      lastName: undefined,
-      voice: null
+      data: null, // this is the data we'll get back from our Chuck Norris api call
+      firstName: undefined, // you can add an optional firstName option to your api call, replacing the 'Chuck'
+      lastName: undefined, // same here, but replacing 'Norris'
+      voice: null // our joke machine speaks! We're keeping track of it's voice in our state
     };
+    /*
+      This is a ES6 thing, we need to have access to our 'this' in our instance methods
+      It's also a nice place to state what our instance functions are
+    */
     this.fetchData = this.fetchData.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleVoiceChange = this.handleVoiceChange.bind(this);
   }
 
+  /*
+    This is a react lifecycle event method. When our component mounts (get's set in the DOM), this gets called
+    This method will only get called once in it's existence
+  */
   componentDidMount() {
     this.fetchData();
   }
 
+  /*
+    This is where we're interacting with the Chuck Norris api
+  */
   fetchData() {
     const { firstName, lastName } = this.state;
 
+    /*
+      this.setState is a function we get from the React.Component class
+      When calling this function, you only have to tell React exactly what properties of your state change
+      The other properties will stay the same
+      When we're fecthing data, we want the data to be cleared, so make it null
+      NOTE: this is an asynchronous function (ie, you don't know exactly when the effects of this function happen)
+        Thinking asynchronously can be really tricky in the begining, but it's a powerful concept once you get the hang
+        of it
+    */
     this.setState({ data: null });
+
+    /*
+      fetch returns a Promise. This is the ES6 way for dealing with asynchronous functions
+      Heres the docs for the fetch standard: https://fetch.spec.whatwg.org/
+      It's technically not supported in this capacity in some browsers, so a library was used to take care of it
+
+      Here, we're fetching the data from the end point we defined above
+      Initially, nothing happens, because our request is traveling to and from Chuck Norris's server
+      So we have to wait until the data comes back
+      What's cool about a Promise is that you get to give it instructions on what to do with the data once it comes back
+      We're doing that with what's called a 'callback function', which we pass to the .then function of our Promise
+    */
     fetch(apiEndPoint(firstName, lastName))
-    .then(response => response.json())
+    .then(response => response.json()) // This one is just part of fetching data, nothing too interesting is happening here
     .then((data) => {
+      /*
+        We got the data back from the api!! Yay :D
+        Let's set our state with our new data. This will cause the component to re-render
+      */
       this.setState({ data });
     })
     .catch((err) => {
@@ -42,32 +90,67 @@ export default class Test extends React.Component {
     });
   }
 
+  /*
+    This is a simple example of an event handler
+    When a mouse/trackpad/whatever click happens, we want to fetch new data
+    This will be attached to a 'Get New Joke' button
+  */
   handleClick() {
     this.fetchData();
   }
 
+  /*
+    Since we're keeping track of our optional first and last names in state, we need to have a way to update it
+    Something cool about JavaScript is that you can create objects with the syntax you see below
+    This way, we can have potentially hundreds of names in our state, but handle the state change with one function
+  */
   handleNameChange({ target }) {
     this.setState({ [target.name]: target.value });
   }
 
+  /*
+    Another handler... Same as before
+    What property of the state is changing?
+  */
   handleVoiceChange(voice) {
-    this.setState({ voice });
+    this.setState(/* What about our state is changing? */);
   }
 
+  /*
+    This is where the magic happens!
+    Our render method is what React calls when it wants to know what this component represents (the declarative thing we talked about)
+    Based on the component's current state and props, we're rendering what you see below in the return expression
+  */
   render() {
+    // Object destructuring to get our current state
     const { data, voice } = this.state;
+    // This is a short hand way to check for null without throwing an error
     const joke = data && data.value.joke;
 
+    // This is the DOM element we're returning
     return (
       <div>
         <CardText>
+          {/*
+            Comments in JSX are weird...
+            Below is short hand to pass the string 'Loading...' if the variable joke is 'falsy'
+          */}
           {joke || 'Loading...'}
         </CardText>
+        {/*
+          You can pass css properties straight to a component for styling.
+          NOTE: this will produce inline styling, which has a high specificity
+          Try it yourself! To see obvious results, I'd suggest giving it a nice and ugly backgroundColor
+        */}
         <div
           style={{
             display: 'flex'
           }}
         >
+          {/*
+            This Speech component is a library I found while writing this demo. It's slighly jank, but cool
+            All of the error messages in your console are coming from this, not me I swear! :D
+          */}
           <Speech
             text={joke || 'Loading...'}
             voice={voice}
@@ -78,6 +161,11 @@ export default class Test extends React.Component {
               }
             }}
           />
+          {/*
+            Here, we're passing our VoiceList component a change handler function
+            The Speech component above needs to know the current selected voice, so this is a way for
+            JokeLoader to be notified by it's child, VoiceList when the voice selection changes
+          */}
           <VoiceList
             onVoiceChange={this.handleVoiceChange}
           />
@@ -89,6 +177,11 @@ export default class Test extends React.Component {
             justifyContent: 'center'
           }}
         >
+          {/*
+            The fancy term for what's happening below is 'controlled component'
+            That means we're giving this component a value and a function to call when it's value changes
+            Relevant reading: https://facebook.github.io/react/docs/forms.html#controlled-components
+          */}
           <TextField
             name="firstName"
             onChange={this.handleNameChange}
@@ -107,8 +200,12 @@ export default class Test extends React.Component {
             }}
             value={this.state.lastName || ''}
           />
+          {/*
+            This is where our click handler function is going!
+            If I remember correctly, we have a function for handling the click event, don't we?
+          */}
           <RaisedButton
-            onClick={this.handleClick}
+            onClick
             primary
           >
             Get a new joke!
