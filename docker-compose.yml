@@ -1,0 +1,19 @@
+## Use with:
+# docker-compose up
+
+version: "2"
+
+services:
+    app:
+        # Build the image from the Dockerfile
+        build:
+            context: .
+
+        # Expose port localhost:3000 for the site
+        # Attaches <local_port>:<container_port>
+        ports:
+            - "3000:3000"
+        # Mount the volume (directory) <local_dir>:<container_dir>
+        # Attaches all files in . (current directory) into /app/
+        volumes:
+            - .:/app
