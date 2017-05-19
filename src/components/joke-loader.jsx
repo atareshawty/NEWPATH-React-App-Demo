@@ -2,15 +2,13 @@ import React from 'react';
 import { CardText } from 'material-ui/Card';
 import RaisedButton from 'material-ui/RaisedButton';
 import Speech from 'react-speech/dist/react-speech.min';
-import TextField from 'material-ui/TextField';
 import VoiceList from './voice-list';
 
 /*
   Nothing informative in this comment, but you should check out the Chuck Norris api docs to see what else you can do with it!
-  http://www.icndb.com/api/
+  https://api.chucknorris.io/
 */
-const apiEndPoint = (firstName = 'Chuck', lastName = 'Norris') =>
-  `http://api.icndb.com/jokes/random?firstName=${firstName}&lastName=${lastName}`;
+const apiEndPoint = `https://api.chucknorris.io/jokes/random`;
 
 /*
   ES6 has classes! (kind of)
@@ -26,8 +24,6 @@ export default class JokeLoader extends React.Component {
     // The state of this component is represented by this JavaScript object
     this.state = {
       data: null, // this is the data we'll get back from our Chuck Norris api call
-      firstName: undefined, // you can add an optional firstName option to your api call, replacing the 'Chuck'
-      lastName: undefined, // same here, but replacing 'Norris'
       voice: null // our joke machine speaks! We're keeping track of it's voice in our state
     };
     /*
@@ -36,7 +32,6 @@ export default class JokeLoader extends React.Component {
     */
     this.fetchData = this.fetchData.bind(this);
     this.handleClick = this.handleClick.bind(this);
-    this.handleNameChange = this.handleNameChange.bind(this);
     this.handleVoiceChange = this.handleVoiceChange.bind(this);
   }
 
@@ -52,8 +47,6 @@ export default class JokeLoader extends React.Component {
     This is where we're interacting with the Chuck Norris api
   */
   fetchData() {
-    const { firstName, lastName } = this.state;
-
     /*
       this.setState is a function we get from the React.Component class
       When calling this function, you only have to tell React exactly what properties of your state change
@@ -76,7 +69,7 @@ export default class JokeLoader extends React.Component {
       What's cool about a Promise is that you get to give it instructions on what to do with the data once it comes back
       We're doing that with what's called a 'callback function', which we pass to the .then function of our Promise
     */
-    fetch(apiEndPoint(firstName, lastName))
+    fetch(apiEndPoint)
     .then(response => response.json()) // This one is just part of fetching data, nothing too interesting is happening here
     .then((data) => {
       /*
@@ -100,15 +93,6 @@ export default class JokeLoader extends React.Component {
   }
 
   /*
-    Since we're keeping track of our optional first and last names in state, we need to have a way to update it
-    Something cool about JavaScript is that you can create objects with the syntax you see below
-    This way, we can have potentially hundreds of names in our state, but handle the state change with one function
-  */
-  handleNameChange({ target }) {
-    this.setState({ [target.name]: target.value });
-  }
-
-  /*
     Another handler... Same as before
     What property of the state is changing?
   */
@@ -125,7 +109,7 @@ export default class JokeLoader extends React.Component {
     // Object destructuring to get our current state
     const { data, voice } = this.state;
     // This is a short hand way to check for null without throwing an error
-    const joke = data && data.value.joke;
+    const joke = data && data.value;
 
     // This is the DOM element we're returning
     return (
@@ -177,29 +161,6 @@ export default class JokeLoader extends React.Component {
             justifyContent: 'center'
           }}
         >
-          {/*
-            The fancy term for what's happening below is 'controlled component'
-            That means we're giving this component a value and a function to call when it's value changes
-            Relevant reading: https://facebook.github.io/react/docs/forms.html#controlled-components
-          */}
-          <TextField
-            name="firstName"
-            onChange={this.handleNameChange}
-            placeholder="First Name"
-            style={{
-              margin: '0 5px'
-            }}
-            value={this.state.firstName || ''}
-          />
-          <TextField
-            name="lastName"
-            onChange={this.handleNameChange}
-            placeholder="Last Name"
-            style={{
-              margin: '0 5px'
-            }}
-            value={this.state.lastName || ''}
-          />
           {/*
             This is where our click handler function is going!
             If I remember correctly, we have a function for handling the click event, don't we?
